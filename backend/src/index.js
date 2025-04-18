@@ -32,9 +32,23 @@ app.use("/api/messages", messageRoutes); // Message route
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  // app.get("*", (req, res) => {
+  //   res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  // });
 
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+  app.use((req, res, next) => {
+    try {
+      const indexPath = path.join(
+        __dirname,
+        "../frontend",
+        "dist",
+        "index.html"
+      );
+      res.sendFile(indexPath);
+    } catch (error) {
+      console.error("Error serving index.html:", error);
+      next(error);
+    }
   });
 }
 
